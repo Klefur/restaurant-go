@@ -2,7 +2,7 @@ package main
 
 import (
 	"go-restaurant/database"
-	// "go-restaurant/middleware"
+	"go-restaurant/middleware"
 	"go-restaurant/routes"
 	"os"
 
@@ -24,7 +24,7 @@ func main() {
 	
 	routes.UserRoutes(router)
 
-	// router.Use(middleware.Authentication()) 
+	router.Use(middleware.Authentication()) 
 
 	routes.FoodRoutes(router)
 	routes.MenuRoutes(router)

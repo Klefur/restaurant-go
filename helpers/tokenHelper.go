@@ -1,11 +1,13 @@
 package helpers
 
 import (
+	"fmt"
 	"go-restaurant/models"
 	"os"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
+	"github.com/joho/godotenv"
 )	
 
 type TokenClaims struct {
@@ -15,10 +17,10 @@ type TokenClaims struct {
 	jwt.StandardClaims
 }
 
-var SECRET_KEY = os.Getenv("SECRET_KEY")
-
 func GenerateToken(user models.User) (token string, err error) {
-
+	godotenv.Load()
+	SECRET_KEY := os.Getenv("SECRET_KEY")
+	
 	claims := TokenClaims{
 		user.ID,
 		*user.First_name + " " + *user.Last_name,
@@ -36,25 +38,32 @@ func GenerateToken(user models.User) (token string, err error) {
 	return token, nil
 }
 
-func ValidateToken(token string) (isValid bool, msg string) {
-	tkn, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
-		return []byte(SECRET_KEY), nil
-	})
+func ValidateToken(token string) (claims *TokenClaims, msg string) {
+	godotenv.Load()
+	SECRET_KEY := os.Getenv("SECRET_KEY")
+
+	tkn, err := jwt.ParseWithClaims(
+		token,
+		&TokenClaims{}, 
+		func(token *jwt.Token) (interface{}, error) {
+			return []byte(SECRET_KEY), nil 
+		},
+	)
 
 	claims, ok := tkn.Claims.(*TokenClaims)
 
-	if !ok || !tkn.Valid {
-		return false, "Invalid token"
+	if !ok {
+		return claims, "Invalid token"
 	}
 
 	if err != nil {
-		return false, err.Error()
+		return claims, err.Error()
 	}
 
 	if claims.ExpiresAt < time.Now().Unix() {
-		return false, "Token has expired"
+		return claims, "Token has expired"
 	}
 
-	return true, ""
+	return claims, ""
 
 }

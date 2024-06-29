@@ -13,5 +13,4 @@ type User struct {
 	Password 		*string		`json:"password" gorm:"not null"`
 	Avatar 			*string		`json:"avatar"`
 	Phone 			*string		`json:"phone" gorm:"not null"`
-	Refresh_token 	*string		`json:"refresh_token"`
 }

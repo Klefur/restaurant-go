@@ -17,12 +17,17 @@ func Authentication() gin.HandlerFunc {
 			return
 		}
 
-		isValid, msg := helper.ValidateToken(token)
-		if !isValid || msg != ""{
+		claims, msg := helper.ValidateToken(token)
+		if msg != ""{
 			c.JSON(http.StatusUnauthorized, gin.H{ "success": false, "error": msg })
 			c.Abort()
 			return
 		}
+
+		c.Set("id", claims.ID)
+		c.Set("username", claims.Username)
+		c.Set("email", claims.Email)
+
 		c.Next()
 	}
 }
