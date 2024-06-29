@@ -1,7 +1,6 @@
 package helpers
 
 import (
-	"fmt"
 	"go-restaurant/models"
 	"os"
 	"time"
@@ -20,7 +19,7 @@ type TokenClaims struct {
 func GenerateToken(user models.User) (token string, err error) {
 	godotenv.Load()
 	SECRET_KEY := os.Getenv("SECRET_KEY")
-	
+
 	claims := TokenClaims{
 		user.ID,
 		*user.First_name + " " + *user.Last_name,
