@@ -12,19 +12,25 @@ import (
 func main() {
 
 	port := os.Getenv("PORT")
-	
+
 	if port == "" {
 		port = "8080"
 	}
-	
+
 	database.InitDB()
 
 	router := gin.New()
 	router.Use(gin.Logger())
-	
+
+	router.GET("/", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"message": "Welcome to the restaurant API",
+		})
+	})
+
 	routes.UserRoutes(router)
 
-	router.Use(middleware.Authentication()) 
+	router.Use(middleware.Authentication())
 
 	routes.FoodRoutes(router)
 	routes.MenuRoutes(router)

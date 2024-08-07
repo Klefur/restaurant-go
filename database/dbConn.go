@@ -19,10 +19,10 @@ func InitDB() {
 	dbUser := os.Getenv("DB_USER")
 	dbPassword := os.Getenv("DB_PASSWORD")
 	dbName := os.Getenv("DB_NAME")
+	dbHost := os.Getenv("DB_HOST")
 
-	dsn := "host=localhost user=" + dbUser + " password=" + dbPassword + " dbname=" + dbName + " port=5432"
 	conn, err := gorm.Open(postgres.New(postgres.Config{
-		DSN: dsn,
+		DSN: "postgresql://" + dbUser + ":" + dbPassword + "@" + dbHost + "/" + dbName,
 	}), &gorm.Config{})
 
 	if err != nil {
@@ -30,10 +30,9 @@ func InitDB() {
 		panic(err)
 	}
 
-	
 	// Uncomment the following line to drop all tables
 	// err = conn.Migrator().DropTable(&model.User{}, &model.Food{}, &model.Menu{}, &model.Table{}, &model.Order{}, &model.OrderItem{}, &model.Invoice{})
-	
+
 	err = conn.AutoMigrate(&model.User{}, &model.Food{}, &model.Menu{}, &model.Table{}, &model.Order{}, &model.OrderItem{}, &model.Invoice{})
 
 	if err != nil {
@@ -48,14 +47,13 @@ func GetDB() *gorm.DB {
 
 	godotenv.Load()
 
-	dbName := os.Getenv("DB_NAME")
 	dbUser := os.Getenv("DB_USER")
 	dbPassword := os.Getenv("DB_PASSWORD")
-
-	dsn := "host=localhost user=" + dbUser + " password=" + dbPassword + " dbname=" + dbName + " port=5432"
+	dbName := os.Getenv("DB_NAME")
+	dbHost := os.Getenv("DB_HOST")
 
 	db, err := gorm.Open(postgres.New(postgres.Config{
-		DSN: dsn,
+		DSN: "postgresql://" + dbUser + ":" + dbPassword + "@" + dbHost + "/" + dbName,
 	}), &gorm.Config{})
 
 	if err != nil {
