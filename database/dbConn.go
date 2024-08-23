@@ -5,35 +5,37 @@ import (
 	"log"
 	"os"
 
-	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 
 	model "go-restaurant/models"
 )
 
-func InitDB() {
+var dsn string
 
-	godotenv.Load()
+func InitDB() {
 
 	dbUser := os.Getenv("DB_USER")
 	dbPassword := os.Getenv("DB_PASSWORD")
 	dbName := os.Getenv("DB_NAME")
 	dbHost := os.Getenv("DB_HOST")
 
-	conn, err := gorm.Open(postgres.New(postgres.Config{
-		DSN: "postgresql://" + dbUser + ":" + dbPassword + "@" + dbHost + "/" + dbName,
-	}), &gorm.Config{})
+	dsn = "postgresql://" + dbUser + ":" + dbPassword + "@" + dbHost + "/" + dbName
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	if err != nil {
-		fmt.Println("Failed to connect to database")
+		log.Fatal("error connecting to database")
 		panic(err)
 	}
 
 	// Uncomment the following line to drop all tables
-	// err = conn.Migrator().DropTable(&model.User{}, &model.Food{}, &model.Menu{}, &model.Table{}, &model.Order{}, &model.OrderItem{}, &model.Invoice{})
+	err = db.Migrator().DropTable(&model.User{}, &model.Food{}, &model.Menu{}, &model.Table{}, &model.Order{}, &model.OrderItem{}, &model.Invoice{})
+	if err != nil {
+		fmt.Println("error dropping tables")
+		panic(err)
+	}
 
-	err = conn.AutoMigrate(&model.User{}, &model.Food{}, &model.Menu{}, &model.Table{}, &model.Order{}, &model.OrderItem{}, &model.Invoice{})
+	err = db.AutoMigrate(&model.User{}, &model.Food{}, &model.Menu{}, &model.Table{}, &model.Order{}, &model.OrderItem{}, &model.Invoice{})
 
 	if err != nil {
 		fmt.Println("error migrating tables")
@@ -43,22 +45,21 @@ func InitDB() {
 	fmt.Println("Database initialized & migrated")
 }
 
-func GetDB() *gorm.DB {
-
-	godotenv.Load()
+func GetDB() (*gorm.DB) {
 
 	dbUser := os.Getenv("DB_USER")
 	dbPassword := os.Getenv("DB_PASSWORD")
 	dbName := os.Getenv("DB_NAME")
 	dbHost := os.Getenv("DB_HOST")
 
-	db, err := gorm.Open(postgres.New(postgres.Config{
-		DSN: "postgresql://" + dbUser + ":" + dbPassword + "@" + dbHost + "/" + dbName,
-	}), &gorm.Config{})
+	dsn = "postgresql://" + dbUser + ":" + dbPassword + "@" + dbHost + "/" + dbName
+
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	db.Logger = db.Logger.LogMode(4)
 
 	if err != nil {
-		log.Fatalf("error connecting to database: %v", err)
-		os.Exit(1)
+		log.Fatal("error connecting to database")
+		return nil
 	}
 
 	return db

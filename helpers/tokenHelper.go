@@ -7,12 +7,12 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/joho/godotenv"
-)	
+)
 
 type TokenClaims struct {
-	ID uint
+	ID       uint
 	Username string
-	Email string
+	Email    string
 	jwt.StandardClaims
 }
 
@@ -22,8 +22,8 @@ func GenerateToken(user models.User) (token string, err error) {
 
 	claims := TokenClaims{
 		user.ID,
-		*user.First_name + " " + *user.Last_name,
-		*user.Email,
+		user.First_name + " " + user.Last_name,
+		user.Email,
 		jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Hour * 24).Unix(),
 		},
@@ -43,9 +43,9 @@ func ValidateToken(token string) (claims *TokenClaims, msg string) {
 
 	tkn, err := jwt.ParseWithClaims(
 		token,
-		&TokenClaims{}, 
+		&TokenClaims{},
 		func(token *jwt.Token) (interface{}, error) {
-			return []byte(SECRET_KEY), nil 
+			return []byte(SECRET_KEY), nil
 		},
 	)
 

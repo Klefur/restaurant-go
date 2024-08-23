@@ -5,7 +5,7 @@ import (
 	controller "go-restaurant/controllers"
 )
 
-func InvoiceRoutes(router *gin.Engine) {
+func InvoiceRoutes(router *gin.RouterGroup) {
 	
 	router.GET("/invoices", controller.GetInvoices())
 	router.GET("/invoices/:id", controller.GetInvoice())

@@ -1,9 +1,10 @@
 package controllers
 
 import (
-	"github.com/gin-gonic/gin"
-	"net/http"
 	"go-restaurant/models"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 func GetTables() gin.HandlerFunc {
@@ -12,11 +13,11 @@ func GetTables() gin.HandlerFunc {
 
 		err := db.Find(&tables).Error
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{ "success": false, "error": "error occurred while fetching tables" })
+			c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "error occurred while fetching tables"})
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{ "success": true, "payload": tables })
+		c.JSON(http.StatusOK, gin.H{"success": true, "payload": tables})
 	}
 }
 
@@ -27,16 +28,16 @@ func GetTable() gin.HandlerFunc {
 
 		err := db.Find(&table, tableId).Error
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{ "success": false, "error": "error occurred while fetching table" })
+			c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "error occurred while fetching table"})
 			return
 		}
 
 		if table.ID == 0 {
-			c.JSON(http.StatusNotFound, gin.H{ "success": false, "error": "table was not found" })
+			c.JSON(http.StatusNotFound, gin.H{"success": false, "error": "table was not found"})
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{ "success": true, "payload": table })
+		c.JSON(http.StatusOK, gin.H{"success": true, "payload": table})
 	}
 }
 
@@ -46,17 +47,17 @@ func CreateTable() gin.HandlerFunc {
 
 		err := c.BindJSON(&table)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{ "success": false, "error": err.Error() })
+			c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": err.Error()})
 			return
 		}
 
 		err = db.Create(&table).Error
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{ "success": false, "error": "error occurred while creating table" })
+			c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "error occurred while creating table"})
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{ "success": true, "payload": table })
+		c.JSON(http.StatusOK, gin.H{"success": true, "payload": table})
 	}
 }
 
@@ -66,16 +67,16 @@ func UpdateTable() gin.HandlerFunc {
 
 		err := c.BindJSON(&table)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{ "success": false, "error": err.Error() })
+			c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": err.Error()})
 			return
 		}
 
 		err = db.Model(&table).Where("id = ?", table.ID).Updates(&table).Error
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{ "success": false, "error": "error occurred while updating table" })
+			c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "error occurred while updating table"})
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{ "success": true, "payload": table })
+		c.JSON(http.StatusOK, gin.H{"success": true, "payload": table})
 	}
 }

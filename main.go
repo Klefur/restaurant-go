@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
+	_ "github.com/joho/godotenv/autoload"
 )
 
 func main() {
@@ -14,7 +15,7 @@ func main() {
 	port := os.Getenv("PORT")
 
 	if port == "" {
-		port = "8080"
+		port = "80"
 	}
 
 	database.InitDB()
@@ -22,22 +23,25 @@ func main() {
 	router := gin.New()
 	router.Use(gin.Logger())
 
-	router.GET("/", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "Welcome to the restaurant API",
+	api := router.Group("/api")
+	{
+		api.GET("/", func(c *gin.Context) {
+			c.JSON(200, gin.H{
+				"message": "Welcome to the restaurant API",
+			})
 		})
-	})
 
-	routes.UserRoutes(router)
+		routes.UserRoutes(api)
 
-	router.Use(middleware.Authentication())
+		api.Use(middleware.Authentication())
 
-	routes.FoodRoutes(router)
-	routes.MenuRoutes(router)
-	routes.TableRoutes(router)
-	routes.OrderRoutes(router)
-	routes.OrderItemRoutes(router)
-	routes.InvoiceRoutes(router)
+		routes.FoodRoutes(api)
+		routes.MenuRoutes(api)
+		routes.TableRoutes(api)
+		routes.OrderRoutes(api)
+		routes.OrderItemRoutes(api)
+		routes.InvoiceRoutes(api)
+	}
 
 	router.Run(":" + port)
 

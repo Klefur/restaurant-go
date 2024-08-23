@@ -5,7 +5,7 @@ import (
 	controller "go-restaurant/controllers"
 )
 
-func OrderItemRoutes(router *gin.Engine) {
+func OrderItemRoutes(router *gin.RouterGroup) {
 
 	router.GET("/orderItems", controller.GetOrderItems())
 	router.GET("/orderItems/:id", controller.GetOrderItem())
