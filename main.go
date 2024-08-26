@@ -1,7 +1,8 @@
 package main
 
 import (
-	"go-restaurant/database"
+	"fmt"
+	db "go-restaurant/database"
 	"go-restaurant/middleware"
 	"go-restaurant/routes"
 	"os"
@@ -14,11 +15,22 @@ func main() {
 
 	port := os.Getenv("PORT")
 
+	action := os.Args[1]
+
+	switch action {
+	case "migrate":
+		db.MigrateDB()
+	case "drop":
+		db.DropTables()
+	case "init":
+		db.InitDB()
+	default:
+		fmt.Println("No action specified")
+	}
+
 	if port == "" {
 		port = "80"
 	}
-
-	database.InitDB()
 
 	router := gin.New()
 	router.Use(gin.Logger())

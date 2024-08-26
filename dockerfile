@@ -23,9 +23,6 @@ WORKDIR /app
 # Copy the binary from the builder stage
 COPY --from=builder /app/app .
 
-# Copy the .env file
-COPY --from=builder /app/.env .
-
 # Expose the application port (change if needed)
 EXPOSE 80
 
